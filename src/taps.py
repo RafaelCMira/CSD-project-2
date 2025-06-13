@@ -1,9 +1,5 @@
 import json
 import random
-import geoip2.database
-from pprint import pprint
-from dataclasses import dataclass
-from typing import List
 from models import (
     parse_input_config,
     parse_tor_nodes,
