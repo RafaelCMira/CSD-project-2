@@ -1,9 +1,6 @@
 import geoip2.database
 
 
-GEOLITE_DB_PATH = "../GeoLite2-Country_20250610/GeoLite2-Country.mmdb"
-
-
 class IPGeolocation:
     """A wrapper for the GeoIP2 database to handle lookups"""
 
