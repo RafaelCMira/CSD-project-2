@@ -17,3 +17,41 @@ Exit nodes chosen: 2409 unique relays
 Most common exit: [('62F4994C6F3A5B3E590AEECE522591696C8DDEE2', 29)]
 ##########################################################################
 --------------------------------------------------------------------------
+Filtering with ASN and Coutry
+################# Adversary Avoidance (Threshold: < 0.5) - (Runs: 1000) #################
+Guard in adversary country: 0.50%
+Middle in adversary country: 11.40%
+Exit in adversary country: 7.20%
+##########################################################################
+################# Path Correlation Vulnerability (Runs: 1000) #################
+Paths vulnerable to correlation: 3.80%
+##########################################################################
+ ################# Path Performance (bandwidth) (Runs: 1000) #################
+Average path bandwidth: 14.11 MB/s
+##########################################################################
+################# Load Distribution (Runs: 10000) #################
+Guard nodes chosen: 3573 unique relays
+Most common guard: [('A7C2DF525D373D6A0C4F2540C3927ADF511124CC', 18)]
+Exit nodes chosen: 2429 unique relays
+Most common exit: [('3C89C80E2699FB6358BBB64FDC9547AFCB5C03F7', 26)]
+##########################################################################
+--------------------------------------------------------------------------
+Filtering with ASN Only
+################# Adversary Avoidance (Threshold: < 0.5) - (Runs: 1000) #################
+Guard in adversary country: 0.20%
+Middle in adversary country: 11.40%
+Exit in adversary country: 7.70%
+##########################################################################
+################# Path Correlation Vulnerability (Runs: 1000) #################
+Paths vulnerable to correlation: 6.60%
+##########################################################################
+ ################# Path Performance (bandwidth) (Runs: 1000) #################
+Average path bandwidth: 14.34 MB/s
+##########################################################################
+################# Load Distribution (Runs: 10000) #################
+Guard nodes chosen: 3555 unique relays
+Most common guard: [('BD2BC415D5D8AE3C34430E70EC82CF3B0C61BDDF', 20)]
+Exit nodes chosen: 2419 unique relays
+Most common exit: [('62F4994C6F3A5B3E590AEECE522591696C8DDEE2', 33)]
+##########################################################################
+--------------------------------------------------------------------------
