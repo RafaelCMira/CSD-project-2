@@ -40,3 +40,12 @@ Note, you can override the default configuration by using those parameters:
 ```bash
 python .\taps.py --nodes ..\inputs\tor_consensus.json --config ..\inputs\input1.json
 ```
+
+This will output the guard, middle, and exit nodes with their respective fingerprint, country and ASN number.
+The output will be something like this:
+
+```
+  Guard: CAF71D173C0E703B6E1E0960D0249627EA2AC2C5 | AL | 215540
+  Middle: F922C23FF68AAADBD2C9A384471B63694A879BA5 | PL | 210558
+  Exit: 5AFEF0FF40762591B555248D25487E797E732B4D | UA | 207656
+```
