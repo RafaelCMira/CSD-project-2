@@ -22,21 +22,6 @@ class Params:
 
 
 @dataclass
-class Result:
-    """
-    Represents the result of the path selection.
-    Attributes:
-        guard_node (str): The fingerprint of the guard node.
-        middle_node (str): The fingerprint of the middle node.
-        exit_node (str): The fingerprint of the exit node.
-    """
-
-    guard_node: str
-    middle_node: str
-    exit_node: str
-
-
-@dataclass
 class Alliance:
     """
     Represents an alliance of countries with a trust value.
@@ -113,6 +98,21 @@ class TorNode:
     asn: str
     exit: List[ExitRule]
     country: str = ""
+
+
+@dataclass
+class Result:
+    """
+    Represents the result of the path selection.
+    Attributes:
+        guard_node (str): The fingerprint of the guard node.
+        middle_node (str): The fingerprint of the middle node.
+        exit_node (str): The fingerprint of the exit node.
+    """
+
+    guard_node: TorNode
+    middle_node: TorNode
+    exit_node: TorNode
 
 
 def parse_input_config(config_data, geo_locator):
