@@ -86,19 +86,20 @@ DEFAULT_TRUST_SCORE_EXIT = (
 
 
 # region Aux functions
-def _filter_exit_nodes(all_nodes: List[TorNode]) -> List[TorNode]:
+def _filter_exit_nodes(all_nodes: List[TorNode], destination_ip: str) -> List[TorNode]:
     """Returns a list of nodes that can be used as exits.
-    For now simply filter out nodes that reject all traffic
-    TODO: Implement more complex filtering based on exit rules.
+    Filters nodes based on if they have exit rules that allow the destination IP or if they accept all (*).
     """
     valid_exits = []
     for node in all_nodes:
-        is_reject_all = any(
-            rule.address == "*" and rule.port == "*" and rule.action == "reject"
+        is_valid = any(
+            (rule.address == "*" or rule.address == destination_ip)
+            and rule.action == "accept"
             for rule in node.exit
         )
-        if not is_reject_all:
+        if is_valid:
             valid_exits.append(node)
+
     return valid_exits
 
 
@@ -298,7 +299,7 @@ def select_path(
     """
 
     potential_guards = nodes
-    potential_exits = _filter_exit_nodes(nodes)
+    potential_exits = _filter_exit_nodes(nodes, config.destination)
 
     trust_map = _get_country_trust_map(config)
 
