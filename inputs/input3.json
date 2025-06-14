@@ -1,0 +1,22 @@
+{
+	"Alliances": [
+		{
+			"countries": ["IN", "PK", "BD"],
+			"trust": 0.3
+		},
+		{
+			"countries": ["JP", "KR", "CN"],
+			"trust": 0.6
+		},
+		{
+			"countries": ["US", "GB", "AU", "NZ"],
+			"trust": 0.9
+		},
+		{
+			"countries": ["BR", "AR", "CL"],
+			"trust": 0.2
+		}
+	],
+	"Client": "49.207.180.10",
+	"Destination": "8.8.8.8"
+}

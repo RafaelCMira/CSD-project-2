@@ -59,7 +59,14 @@ EXIT_PARAMS = {
 # NOTE Interesting, when using 0.9 they all passed, but when using 0.8, some failed.
 
 
-DEFAULT_TRUST_SCORE = 0.8  # Default trust score for countries not in any alliance
+## AFTER ADDING MORE INPUT DIVERSE INPUT FILES TO TEST
+# NOTE More Interesting, when using 1 as the value, that's where i got less failures. In a total of 540 runs (10 runs for each of the 54 tests), i got 6 failures in total.
+# All the failures were related to FAILED unitTest.py::test_guard_node_not_adversary[../inputs/input2.json-../inputs/tor_consensus.json-0.8-7] (Where 0.8 or 0.9 was used)
+# This pretty much says that for the guard node, the best trust to have is 1, since this will guarantee that the guard node is not an adversary
+# if we consider an adversary to be a node with a security score below 0.8. For 0.8 or 0.9, the best value remains 1 but sometimes it will choose a adversarie.
+# IN this particular case, it only failed for the specified input files, but for the other inputs, it passed. (Even when considering adversarie a node with trust below 90% it passed)
+
+DEFAULT_TRUST_SCORE = 1  # Default trust score for countries not in any alliance
 
 # endregion
 

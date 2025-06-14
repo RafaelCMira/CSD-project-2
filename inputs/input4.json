@@ -1,0 +1,22 @@
+{
+	"Alliances": [
+		{
+			"countries": ["ZA", "NG", "EG"],
+			"trust": 0.5
+		},
+		{
+			"countries": ["RU", "UA", "BY"],
+			"trust": 0.1
+		},
+		{
+			"countries": ["SE", "NO", "DK", "FI"],
+			"trust": 0.95
+		},
+		{
+			"countries": ["US", "CA"],
+			"trust": 0.4
+		}
+	],
+	"Client": "102.165.35.12",
+	"Destination": "172.217.22.14"
+}
