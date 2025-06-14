@@ -17,3 +17,4 @@
 /.idea/tasks.xml
 
 /src/__pycache__
+/src/.pytest_cache
