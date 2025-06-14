@@ -260,14 +260,17 @@ def select_guard_node(
 
 
 def select_exit_node(
-    potential_exits: List[TorNode],
+    nodes: List[TorNode],
     config: InputConfig,
     alpha_exit: Params,
     trust_map: Dict[str, float],
     chosen_guard: TorNode,
 ) -> TorNode | None:
     log.info("Selecting Exit Node...")
-    total_exit_bandwidth = sum(n.bandwidth.measured for n in potential_exits)
+
+    filtered_exits = _filter_exit_nodes(nodes, config.destination)
+
+    total_exit_bandwidth = sum(n.bandwidth.measured for n in filtered_exits)
 
     exit_scores = {
         node.fingerprint: exit_security(
@@ -277,11 +280,11 @@ def select_exit_node(
             node.country,
             trust_map,
         )
-        for node in potential_exits
+        for node in filtered_exits
     }
 
     secure_exits = _find_secure_relays(
-        potential_exits, exit_scores, alpha_exit, total_exit_bandwidth
+        filtered_exits, exit_scores, alpha_exit, total_exit_bandwidth
     )
     log.info(f"Filtered down to {len(secure_exits)} secure exits.")
 
@@ -313,14 +316,11 @@ def select_path(
     Main function to select a Guard-Middle-Exit path.
     """
 
-    potential_guards = nodes
-    potential_exits = _filter_exit_nodes(nodes, config.destination)
-
     trust_map = _get_country_trust_map(config)
 
     # Step 1: Select Guard Node
     chosen_guard = select_guard_node(
-        potential_guards,
+        nodes,
         config,
         alpha_guard,
         trust_map,
@@ -328,7 +328,7 @@ def select_path(
 
     # Step 2: Select Exit Node
     chosen_exit = select_exit_node(
-        potential_exits,
+        nodes,
         config,
         alpha_exit,
         trust_map,
