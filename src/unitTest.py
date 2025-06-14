@@ -320,6 +320,9 @@ def test_path_selection_failure_rate(
     fail_counter = Counter()
     failed_runs = 0
 
+    asn_failures = 0
+    country_failures = 0
+
     for _ in range(N_RUNS):
         result = select_path(all_nodes, input_config, guard_params, exit_params)
         guard_node = result.guard_node
@@ -327,10 +330,6 @@ def test_path_selection_failure_rate(
 
         fail_conditions = []
 
-        # if guard_node.asn == exit_node.asn:
-        #     fail_conditions.append("ASN")
-        # if guard_node.country == exit_node.country:
-        #     fail_conditions.append("COUNTRY")
         if guard_node.fingerprint == exit_node.fingerprint:
             fail_conditions.append("FINGERPRINT")  # This is just for a sanity check
         if guard_node.country in adversaries:
@@ -343,13 +342,32 @@ def test_path_selection_failure_rate(
             for cond in fail_conditions:
                 fail_counter[cond] += 1
 
+        if guard_node.asn == exit_node.asn:
+            asn_failures += 1
+        if guard_node.country == exit_node.country:
+            country_failures += 1
+
     failure_rate = failed_runs / N_RUNS
+    asn_failure_rate = asn_failures / N_RUNS
+    country_failure_rate = country_failures / N_RUNS
 
     print(f"\nResults for {config_path} (adversary_threshold={adversary_threshold}):")
     for cause, count in fail_counter.items():
         print(f"  {cause}: {count} times ({count/N_RUNS:.2%})")
     print(f"  TOTAL failed runs: {failed_runs} out of {N_RUNS} ({failure_rate:.2%})")
+    print(f"  ASN failures: {asn_failures} out of {N_RUNS} ({asn_failure_rate:.2%})")
+    print(
+        f"  COUNTRY failures: {country_failures} out of {N_RUNS} ({country_failure_rate:.2%})"
+    )
 
     assert (
         failure_rate < MAX_FAILURE_RATE
     ), f"Failure rate {failure_rate:.2%} exceeds allowed {MAX_FAILURE_RATE:.2%}"
+
+    assert (
+        asn_failure_rate < MAX_FAILURE_RATE
+    ), f"ASN failure rate {asn_failure_rate:.2%} exceeds allowed {MAX_FAILURE_RATE:.2%}"
+
+    assert (
+        country_failure_rate < MAX_FAILURE_RATE
+    ), f"Country failure rate {country_failure_rate:.2%} exceeds allowed {MAX_FAILURE_RATE:.2%}"
