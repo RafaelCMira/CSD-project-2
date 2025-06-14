@@ -66,8 +66,22 @@ EXIT_PARAMS = {
 # if we consider an adversary to be a node with a security score below 0.8. For 0.8 or 0.9, the best value remains 1 but sometimes it will choose a adversarie.
 # IN this particular case, it only failed for the specified input files, but for the other inputs, it passed. (Even when considering adversarie a node with trust below 90% it passed)
 
-DEFAULT_TRUST_SCORE = 1  # Default trust score for countries not in any alliance
+DEFAULT_TRUST_SCORE_GUARD = (
+    1  # Default trust score for guard nodes countries not in any alliance
+)
 
+
+# Here with a value of 1, it seems that the failure happens at a wider range of adversaries trust scores (from 0.2 to 0.9)
+# When using 0.5, the failures happen much more in the 0.9 adversary trust score (Which leads me to believe that the adversary lower values here are better)
+# With value = 0.5, in 540, 20 failed, 11 on 0.9 (across many inputs) and the other failed more randomly. (3 on 0.6, 1 in 0.2, 0.3, 0.4, 0.5, 0.7, 0.8)
+
+# WIth 0.1, got the same failure rate, the results distributed (more on the higher trust scores, but still some on the lower ones)
+
+# Now with 1 i got better results then with 0.5 so this probably means the algorithm needs some tuning
+# NOTE in failures, more than half of them are in 0.8 and 0.9 adversary trust scores, so this is actually good since for a very small % of the runs ti fails for thos where it shouln't
+DEFAULT_TRUST_SCORE_EXIT = (
+    1  # Default trust score for exit nodes countries not in any alliance
+)
 # endregion
 
 
@@ -185,9 +199,40 @@ def guard_security(
 
     security_score = 1.0
     for country in involved_countries:
-        trust_score = trust_map.get(country, DEFAULT_TRUST_SCORE)
+        trust_score = trust_map.get(country, DEFAULT_TRUST_SCORE_GUARD)
         security_score *= trust_score
 
+    return security_score
+
+
+def exit_security(
+    client_country: str,
+    dest_country: str,
+    guard_country: str,
+    exit_country: str,
+    trust_map: Dict[str, float],
+) -> float:
+    """
+    Calculates security based on avoiding untrusted adversaries on both ends.
+    """
+    entry_countries = {client_country, guard_country}
+    exit_countries = {dest_country, exit_country}
+
+    correlating_countries = entry_countries.intersection(exit_countries)
+
+    # If there are no correlating countries => Nice
+    if not correlating_countries:
+        return 1.0
+
+    # Else the risk is determined by the most untrustworthy adversary in the intersection.
+    max_compromise_prob = 0.0
+    for country in correlating_countries:
+        trust_score = trust_map.get(country, DEFAULT_TRUST_SCORE_EXIT)
+        compromise_prob = 1.0 - trust_score
+        if compromise_prob > max_compromise_prob:
+            max_compromise_prob = compromise_prob
+
+    security_score = 1.0 - max_compromise_prob
     return security_score
 
 
@@ -213,6 +258,35 @@ def select_guard_node(
     return _bandwidth_weighted_choice(secure_guards)
 
 
+def select_exit_node(
+    potential_exits: List[TorNode],
+    config: InputConfig,
+    alpha_exit: Params,
+    trust_map: Dict[str, float],
+    chosen_guard: TorNode,
+) -> TorNode | None:
+    log.info("Selecting Exit Node...")
+    total_exit_bandwidth = sum(n.bandwidth.measured for n in potential_exits)
+
+    exit_scores = {
+        node.fingerprint: exit_security(
+            config.client_country,
+            config.destination_country,
+            chosen_guard.country,
+            node.country,
+            trust_map,
+        )
+        for node in potential_exits
+    }
+
+    secure_exits = _find_secure_relays(
+        potential_exits, exit_scores, alpha_exit, total_exit_bandwidth
+    )
+    log.info(f"Filtered down to {len(secure_exits)} secure exits.")
+
+    return _bandwidth_weighted_choice(secure_exits)
+
+
 # endregion
 
 
@@ -236,10 +310,19 @@ def select_path(
         trust_map,
     )
 
+    # Step 2: Select Exit
+    chosen_exit = select_exit_node(
+        potential_exits,
+        config,
+        alpha_exit,
+        trust_map,
+        chosen_guard,
+    )
+
     return Result(
         guard_node=chosen_guard,
         middle_node=None,  # TODO implement
-        exit_node=None,  # TODO implement
+        exit_node=chosen_exit,
     )
 
 
@@ -274,4 +357,6 @@ if __name__ == "__main__":
             f"  Guard: {selected_path.guard_node.fingerprint} | {selected_path.guard_node.country} | {selected_path.guard_node.nickname}"
         )
         print(f"  Middle: {selected_path.middle_node}")
-        print(f"  Exit: {selected_path.exit_node}")
+        print(
+            f"  Exit: {selected_path.exit_node.fingerprint} | {selected_path.exit_node.country} | {selected_path.exit_node.nickname}"
+        )

@@ -22,6 +22,7 @@ pip install pytest-xdist
 ```
 
 To run the tests, you can use the following command to execute them in parallel: (-n auto will automatically detect the number of available CPUs and run tests in parallel)
+But if yout cpu has more threads than cpus, use the number of threads instead of auto, e.g. -n 12
 
 ```bash
 pytest .\unitTest -n auto
