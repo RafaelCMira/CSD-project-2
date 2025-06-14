@@ -27,7 +27,7 @@ log.basicConfig(
 
 GEOLITE_DB_PATH = "../GeoLite2-Country_20250610/GeoLite2-Country.mmdb"
 NODES_DATA_PATH = "../inputs/tor_consensus.json"
-CONFIG_PATH = "../inputs/Project2ClientInput.json"
+CONFIG_PATH = "../inputs/input1.json"
 
 GUARD_PARAMS = {
     "safe_upper": 0.95,  # Security score must be >= 95% of the BEST score
@@ -44,7 +44,22 @@ EXIT_PARAMS = {
     "bandwidth_frac": 0.2,  # The final pool must represent at least 20% of network bandwidth
 }
 
-DEFAULT_TRUST_SCORE = 1.0  # Default trust score for countries not in any alliance
+# NOTE: When testing, when i set this value to:
+# 0.5, for input1, i was getting consistently the same country as guard node. (DE)
+# 1, for input1, i was gettint different countries as guard node. (Sometimes still got the same country but more often different)
+
+# Another important note, with the test plan i have, i difined a threshold of 0.1 to 0.9 to the adversary.
+# When this value was set to 0.5, some tests that checked if the guard node was not an adversary, were failing. (Of course only those where i considered the threshold as 0.8 or above)
+# This threshold mean that to be considered an adversary, the security score of the guard node must be below 0.8.
+
+# NOTE When this value was set to 1, all tests passed. From 0.1 to 0.9, all tests passed.
+
+# NOTE when i use 0.1, almost the same failed as with 0.5.
+
+# NOTE Interesting, when using 0.9 they all passed, but when using 0.8, some failed.
+
+
+DEFAULT_TRUST_SCORE = 0.8  # Default trust score for countries not in any alliance
 
 # endregion
 
