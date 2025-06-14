@@ -265,10 +265,16 @@ def select_exit_node(
     alpha_exit: Params,
     trust_map: Dict[str, float],
     chosen_guard: TorNode,
+    filter_asn_country: bool = False,
 ) -> TorNode | None:
     log.info("Selecting Exit Node...")
 
     filtered_exits = _filter_exit_nodes(nodes, config.destination)
+
+    if filter_asn_country:
+        filtered_exits = [
+            node for node in filtered_exits if node.asn != chosen_guard.asn
+        ]
 
     total_exit_bandwidth = sum(n.bandwidth.measured for n in filtered_exits)
 
@@ -310,8 +316,12 @@ def select_middle_node(
 
 
 def select_path(
-    nodes: list[TorNode], config: InputConfig, alpha_guard: Params, alpha_exit: Params
-) -> Result:
+    nodes: list[TorNode],
+    config: InputConfig,
+    alpha_guard: Params,
+    alpha_exit: Params,
+    filter_asn_country: bool = False,
+) -> Result | None:
     """
     Main function to select a Guard-Middle-Exit path.
     """
@@ -325,6 +335,9 @@ def select_path(
         alpha_guard,
         trust_map,
     )
+    if not chosen_guard:
+        log.error("Error finding Guard node. Aborting path selection.")
+        return None
 
     # Step 2: Select Exit Node
     chosen_exit = select_exit_node(
@@ -333,7 +346,11 @@ def select_path(
         alpha_exit,
         trust_map,
         chosen_guard,
+        filter_asn_country,
     )
+    if not chosen_exit:
+        log.error("Error finding Exit node. Aborting path selection.")
+        return None
 
     # Step 3: Select Middle Node
     chosen_middle = select_middle_node(
@@ -341,6 +358,9 @@ def select_path(
         chosen_guard,
         chosen_exit,
     )
+    if not chosen_middle:
+        log.error("Error finding Middle node. Aborting path selection.")
+        return None
 
     return Result(
         guard_node=chosen_guard,
@@ -370,9 +390,13 @@ if __name__ == "__main__":
     input_config = parse_input_config(input_config_data, geo_locator)
     all_nodes_data = parse_tor_nodes(all_nodes_data, geo_locator)
 
-    log.debug("Input Config:" + str(input_config))
-
-    selected_path = select_path(all_nodes_data, input_config, GUARD_PARAMS, EXIT_PARAMS)
+    selected_path = select_path(
+        all_nodes_data,
+        input_config,
+        GUARD_PARAMS,
+        EXIT_PARAMS,
+        filter_asn_country=False,
+    )
 
     if selected_path:
         ("\nFinal Selected Path:")
@@ -385,3 +409,6 @@ if __name__ == "__main__":
         print(
             f"  Exit: {selected_path.exit_node.fingerprint} | {selected_path.exit_node.country} | {selected_path.exit_node.asn}"
         )
+    else:
+        log.error("No valid path could be selected.")
+        exit(1)
