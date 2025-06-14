@@ -18,6 +18,7 @@ from auxFunctions import (
     __is_node_safe,
     __is_node_acceptable,
 )
+import argparse
 
 # region Configuration
 log.basicConfig(
@@ -26,8 +27,27 @@ log.basicConfig(
 )
 
 GEOLITE_DB_PATH = "../GeoLite2-Country_20250610/GeoLite2-Country.mmdb"
-NODES_DATA_PATH = "../inputs/tor_consensus.json"
-CONFIG_PATH = "../inputs/input1.json"
+DEFAULT_NODES_DATA_PATH = "../inputs/tor_consensus.json"
+DEFAULT_CONFIG_PATH = "../inputs/input1.json"
+
+# Parse command-line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "--nodes",
+    dest="nodes_data_path",
+    default=DEFAULT_NODES_DATA_PATH,
+    help="Path to the Tor nodes consensus JSON file",
+)
+parser.add_argument(
+    "--config",
+    dest="config_path",
+    default=DEFAULT_CONFIG_PATH,
+    help="Path to the client input config JSON file",
+)
+args = parser.parse_args()
+
+NODES_DATA_PATH = args.nodes_data_path
+CONFIG_PATH = args.config_path
 
 GUARD_PARAMS = {
     "safe_upper": 0.95,

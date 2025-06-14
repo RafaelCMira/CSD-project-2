@@ -1,3 +1,7 @@
+| Student nº | Name        | email                     |
+| ---------- | ----------- | ------------------------- |
+| 59243      | Rafael Mira | rs.mira@campus.fct.unl.pt |
+
 # Python Libs
 
 Im using Anaconda with Python 3.12.4 version.
@@ -30,8 +34,9 @@ pytest .\unitTest -n auto
 
 # How to run the code
 
-To run the code, you can use the following command:
+To run the code, you can use the following command.
+Note, you can override the default configuration by using those parameters:
 
 ```bash
-python .\taps.py
+python .\taps.py --nodes ..\inputs\tor_consensus.json --config ..\inputs\input1.json
 ```
