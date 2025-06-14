@@ -288,6 +288,21 @@ def select_exit_node(
     return _bandwidth_weighted_choice(secure_exits)
 
 
+def select_middle_node(
+    nodes: List[TorNode],
+    chosen_guard: TorNode,
+    chosen_exit: TorNode,
+) -> TorNode | None:
+    log.info("Selecting Middle Node...")
+    middle_candidates = [
+        node
+        for node in nodes
+        if node.fingerprint not in {chosen_guard.fingerprint, chosen_exit.fingerprint}
+    ]
+
+    return _bandwidth_weighted_choice(middle_candidates)
+
+
 # endregion
 
 
@@ -311,7 +326,7 @@ def select_path(
         trust_map,
     )
 
-    # Step 2: Select Exit
+    # Step 2: Select Exit Node
     chosen_exit = select_exit_node(
         potential_exits,
         config,
@@ -320,9 +335,16 @@ def select_path(
         chosen_guard,
     )
 
+    # Step 3: Select Middle Node
+    chosen_middle = select_middle_node(
+        nodes,
+        chosen_guard,
+        chosen_exit,
+    )
+
     return Result(
         guard_node=chosen_guard,
-        middle_node=None,  # TODO implement
+        middle_node=chosen_middle,
         exit_node=chosen_exit,
     )
 
@@ -355,9 +377,11 @@ if __name__ == "__main__":
     if selected_path:
         ("\nFinal Selected Path:")
         print(
-            f"  Guard: {selected_path.guard_node.fingerprint} | {selected_path.guard_node.country} | {selected_path.guard_node.nickname}"
+            f"  Guard: {selected_path.guard_node.fingerprint} | {selected_path.guard_node.country} | {selected_path.guard_node.asn}"
         )
-        print(f"  Middle: {selected_path.middle_node}")
         print(
-            f"  Exit: {selected_path.exit_node.fingerprint} | {selected_path.exit_node.country} | {selected_path.exit_node.nickname}"
+            f"  Middle: {selected_path.middle_node.fingerprint} | {selected_path.middle_node.country} | {selected_path.middle_node.asn}"
+        )
+        print(
+            f"  Exit: {selected_path.exit_node.fingerprint} | {selected_path.exit_node.country} | {selected_path.exit_node.asn}"
         )
