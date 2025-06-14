@@ -63,42 +63,10 @@ EXIT_PARAMS = {
     "accept_lower": 10.0,
     "bandwidth_frac": 0.2,
 }
-
-# NOTE: When testing, when i set this value to:
-# 0.5, for input1, i was getting consistently the same country as guard node. (DE)
-# 1, for input1, i was gettint different countries as guard node. (Sometimes still got the same country but more often different)
-
-# Another important note, with the test plan i have, i difined a threshold of 0.1 to 0.9 to the adversary.
-# When this value was set to 0.5, some tests that checked if the guard node was not an adversary, were failing. (Of course only those where i considered the threshold as 0.8 or above)
-# This threshold mean that to be considered an adversary, the security score of the guard node must be below 0.8.
-
-# NOTE When this value was set to 1, all tests passed. From 0.1 to 0.9, all tests passed.
-
-# NOTE when i use 0.1, almost the same failed as with 0.5.
-
-# NOTE Interesting, when using 0.9 they all passed, but when using 0.8, some failed.
-
-
-## AFTER ADDING MORE INPUT DIVERSE INPUT FILES TO TEST
-# NOTE More Interesting, when using 1 as the value, that's where i got less failures. In a total of 540 runs (10 runs for each of the 54 tests), i got 6 failures in total.
-# All the failures were related to FAILED unitTest.py::test_guard_node_not_adversary[../inputs/input2.json-../inputs/tor_consensus.json-0.8-7] (Where 0.8 or 0.9 was used)
-# This pretty much says that for the guard node, the best trust to have is 1, since this will guarantee that the guard node is not an adversary
-# if we consider an adversary to be a node with a security score below 0.8. For 0.8 or 0.9, the best value remains 1 but sometimes it will choose a adversarie.
-# IN this particular case, it only failed for the specified input files, but for the other inputs, it passed. (Even when considering adversarie a node with trust below 90% it passed)
-
 DEFAULT_TRUST_SCORE_GUARD = (
     1  # Default trust score for guard nodes countries not in any alliance
 )
 
-
-# Here with a value of 1, it seems that the failure happens at a wider range of adversaries trust scores (from 0.2 to 0.9)
-# When using 0.5, the failures happen much more in the 0.9 adversary trust score (Which leads me to believe that the adversary lower values here are better)
-# With value = 0.5, in 540, 20 failed, 11 on 0.9 (across many inputs) and the other failed more randomly. (3 on 0.6, 1 in 0.2, 0.3, 0.4, 0.5, 0.7, 0.8)
-
-# WIth 0.1, got the same failure rate, the results distributed (more on the higher trust scores, but still some on the lower ones)
-
-# Now with 1 i got better results then with 0.5 so this probably means the algorithm needs some tuning
-# NOTE in failures, more than half of them are in 0.8 and 0.9 adversary trust scores, so this is actually good since for a very small % of the runs ti fails for thos where it shouln't
 DEFAULT_TRUST_SCORE_EXIT = (
     1  # Default trust score for exit nodes countries not in any alliance
 )
