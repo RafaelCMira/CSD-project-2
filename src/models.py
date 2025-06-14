@@ -105,9 +105,9 @@ class Result:
     """
     Represents the result of the path selection.
     Attributes:
-        guard_node (str): The fingerprint of the guard node.
-        middle_node (str): The fingerprint of the middle node.
-        exit_node (str): The fingerprint of the exit node.
+        guard_node (TorNode): The fingerprint of the guard node.
+        middle_node (TorNode): The fingerprint of the middle node.
+        exit_node (TorNode): The fingerprint of the exit node.
     """
 
     guard_node: TorNode
