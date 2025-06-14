@@ -1,0 +1,19 @@
+
+################# Adversary Avoidance (Threshold: < 0.5) - (Runs: 1000) #################
+Guard in adversary country: 0.30%
+Middle in adversary country: 12.30%
+Exit in adversary country: 6.70%
+##########################################################################
+################# Path Correlation Vulnerability (Runs: 1000) #################
+Paths vulnerable to correlation: 4.50%
+##########################################################################
+ ################# Path Performance (bandwidth) (Runs: 1000) #################
+Average path bandwidth: 14.77 MB/s
+##########################################################################
+################# Load Distribution (Runs: 10000) #################
+Guard nodes chosen: 3606 unique relays
+Most common guard: [('BD2BC415D5D8AE3C34430E70EC82CF3B0C61BDDF', 16)]
+Exit nodes chosen: 2409 unique relays
+Most common exit: [('62F4994C6F3A5B3E590AEECE522591696C8DDEE2', 29)]
+##########################################################################
+--------------------------------------------------------------------------

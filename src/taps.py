@@ -21,7 +21,7 @@ from auxFunctions import (
 
 # region Configuration
 log.basicConfig(
-    level=log.INFO,
+    level=log.ERROR,
     format="%(levelname)s - %(message)s",
 )
 
@@ -30,18 +30,18 @@ NODES_DATA_PATH = "../inputs/tor_consensus.json"
 CONFIG_PATH = "../inputs/input1.json"
 
 GUARD_PARAMS = {
-    "safe_upper": 0.95,  # Security score must be >= 95% of the BEST score
-    "safe_lower": 2.0,  # Compromise score can be at most 2x the BEST compromise
-    "accept_upper": 0.5,  # Security score must be >= 50% of the BEST score
-    "accept_lower": 5.0,  # Compromise score can be at most 5x the BEST compromise
-    "bandwidth_frac": 0.2,  # The final pool must represent at least 20% of network bandwidth
+    "safe_upper": 0.95,
+    "safe_lower": 2.0,
+    "accept_upper": 0.5,
+    "accept_lower": 5.0,
+    "bandwidth_frac": 0.2,
 }
 EXIT_PARAMS = {
-    "safe_upper": 0.95,  # Security score must be >= 95% of the BEST score
-    "safe_lower": 2.0,  # Compromise score can be at most 2x the BEST compromise
-    "accept_upper": 0.1,  # Security score must be >= 10% of the BEST score
-    "accept_lower": 10.0,  # Compromise score can be at most 10x the BEST compromise
-    "bandwidth_frac": 0.2,  # The final pool must represent at least 20% of network bandwidth
+    "safe_upper": 0.95,
+    "safe_lower": 2.0,
+    "accept_upper": 0.1,
+    "accept_lower": 10.0,
+    "bandwidth_frac": 0.2,
 }
 
 # NOTE: When testing, when i set this value to:
